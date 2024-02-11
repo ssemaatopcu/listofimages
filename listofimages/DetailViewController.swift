@@ -13,10 +13,18 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
         title = selectedImage
         navigationItem.largeTitleDisplayMode = .never // the large titles should behave properly now
 
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+        /*
+         The .action system item displays an arrow coming out of a box, signaling the user can do something when it's tapped.
+         The action parameter is saying "when you're tapped, call the shareTapped() method," and the target parameter tells the button that the method belongs to the current view controller – self.
+         */
+        
+        
         if let imageToLoad = selectedImage {
             imageView.image = UIImage(named: imageToLoad)
             /*
@@ -37,15 +45,18 @@ class DetailViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnTap = false
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+/*  When you call a method using #selector you’ll always need to use @objc too.*/
+    @objc func shareTapped() {
+        guard let image = imageView.image?.jpegData(compressionQuality: 0.8) else {
+            print("No image found")
+            return
+        }
+        /* This has a compressionQuality parameter where you can specify a value between 1.0 (maximum quality) and 0.0 (minimum quality_.*/
+        
+        let vc = UIActivityViewController(activityItems: [], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
+        
     }
-    */
 
 }
